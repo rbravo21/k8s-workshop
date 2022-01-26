@@ -1,0 +1,75 @@
+# Instalar k3s en OSx
+https://k3d.io/#installation
+
+# crear cluster
+k3d cluster create mycluster
+
+# crear cluster custom
+k3d cluster create k3s-rancher \
+  --api-port 6550 \
+  --servers 1 \
+  --agents 3 \
+  --port 443:443@loadbalancer
+
+# Listar nodos
+kubectl get nodes
+
+# Listar Pods
+kubectl get pods
+kubectl get pods -o wide
+
+# Crear pod con el comando run
+kubectl run hello-world-pod --image=gcr.io/google-samples/hello-app:2.0 --generator=run-pod/v1 --port=8080
+
+# Instalar APP demo
+curl -sL https://run.linkerd.io/emojivoto.yml \
+  | kubectl apply -f -
+
+# Listar el puerto del contenedor cero dentro del pod
+kubectl get pod static-web --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}'
+
+# Acceder localmente a un servicio
+kubectl -n emojivoto port-forward svc/web-svc 8080:80
+
+# Instalar Linkderd CLI
+brew install linkerd
+linkerd version
+
+# Instalar panel de control de linkerd 
+linkerd install | kubectl apply -f -
+
+# Instalar extensión viz para linkerd (Prometheus, dashboard y metrics)
+linkerd viz install | kubectl apply -f -
+
+# Chequear instalacion de Likerd
+linkerd check
+
+# Añadir Likerd a un Namespace
+kubectl get -n emojivoto deploy -o yaml \
+  | linkerd inject - \
+  | kubectl apply -f -
+
+# Chequear linkerd en un Namespace
+linkerd -n emojivoto check --proxy
+
+# Ver dashboard de Likerd
+linkerd viz dashboard
+
+# Ver stats del proxy linkerd en Namespace o en un pod
+linkerd -n emojivoto viz stat deploy
+linkerd -n emojivoto viz top deploy
+linkerd -n emojivoto viz tap deploy/web
+
+# Desinstalar linkerd
+linkerd viz uninstall | kubectl delete -f -
+linkerd uninstall | kubectl delete -f -
+
+
+# Practicar con Kubernetes Online
+https://labs.play-with-k8s.com/
+https://www.katacoda.com/courses/kubernetes/playground
+
+# Links
+Lens IDE K8s: https://k8slens.dev/
+Extensión para vscode: https://github.com/inercia/vscode-k3d/
+Alias para zsh: https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/kubectl/kubectl.plugin.zsh
