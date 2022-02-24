@@ -10,7 +10,7 @@ jobs:
     name: "Building & Pushing image"
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME_FLASK: "hello"
+      IMAGE_NAME: "hello"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -29,5 +29,5 @@ jobs:
           no-cache: true
           push: true
           tags: |
-            us-east4-docker.pkg.dev/clever-devops-testings/hello-app/${{ env.IMAGE_NAME_FLASK }}:latest
-            us-east4-docker.pkg.dev/clever-devops-testings/hello-app/${{ env.IMAGE_NAME_FLASK }}:${{ github.sha }}
+            us-east4-docker.pkg.dev/clever-devops-testings/hello-app/${{ env.IMAGE_NAME }}:latest
+            us-east4-docker.pkg.dev/clever-devops-testings/hello-app/${{ env.IMAGE_NAME }}:${{ github.sha }}
